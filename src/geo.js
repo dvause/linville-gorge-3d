@@ -160,7 +160,8 @@ const SPOT = {
   hawksbill: { x: 1510, z: -5440 },
   tableRock: { x: 1810, z: -2980 },
   shortoff: peak(35.8330, -81.8989),
-  wisemans: peak(35.9067, -81.9164),
+  // Wiseman's View is a west-rim overlook (not a summit); real coordinates.
+  wisemans: peak(35.9037382, -81.9053873),
 };
 
 // ---- Height field (DEM bilinear sample) ------------------------------------
