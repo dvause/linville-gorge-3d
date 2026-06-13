@@ -22,7 +22,7 @@ const camera = new THREE.PerspectiveCamera(
   58, window.innerWidth / window.innerHeight, 2, 60000);
 camera.position.set(...START_VIEW.cam);
 
-buildSky(scene);
+const sky = buildSky(scene);
 const water = buildWater(scene);
 let landmarks = null; // built after the DEM loads (labels sample heightAt)
 const { update: updateControls, flyTo, controls, virtual } = buildControls(camera, renderer.domElement);
@@ -104,6 +104,7 @@ renderer.setAnimationLoop(() => {
 
   updateControls(dt);
   water.update(t);
+  sky.update(t);
   if (landmarks) landmarks.update(camera);
 
   renderer.render(scene, camera);

@@ -23,6 +23,7 @@ const skyFrag = /* glsl */ `
   uniform vec3 sunDir;
   uniform vec3 sunTint;
   uniform vec3 cloudColor;
+  uniform float time;
   varying vec3 vDir;
 
   float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -49,7 +50,7 @@ const skyFrag = /* glsl */ `
 
     // soft cumulus: project the dome onto an overhead plane, domain-warped fbm
     if (d.y > 0.015) {
-      vec2 cp = d.xz / d.y * 1.4;
+      vec2 cp = d.xz / d.y * 1.4 + vec2(time * 0.013, time * 0.004); // wind drift
       float warp = fbm(cp * 0.6 + 11.0);
       float n = fbm(cp * 1.15 + warp);
       float cover = smoothstep(0.52, 0.92, n);
@@ -84,6 +85,7 @@ export function buildSky(scene) {
         sunDir: { value: sunDir },
         sunTint: { value: new THREE.Color(0xfff2d8) },
         cloudColor: { value: new THREE.Color(0xf6f9fc) },
+        time: { value: 0 },
       },
       vertexShader: skyVert,
       fragmentShader: skyFrag,
@@ -103,5 +105,9 @@ export function buildSky(scene) {
   const hemi = new THREE.HemisphereLight(0xa8c4e0, 0x3d4a33, 0.6);
   scene.add(hemi);
 
-  return { sky, sunDir };
+  return {
+    sky,
+    sunDir,
+    update(t) { sky.material.uniforms.time.value = t; },
+  };
 }
