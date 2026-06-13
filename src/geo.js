@@ -164,6 +164,17 @@ const SPOT = {
   wisemans: peak(35.9037382, -81.9053873),
 };
 
+// Consistent fly-to framing for rim landmarks: hover over the gorge centerline
+// (lowest terrain, so the camera never lands inside a rim) at the landmark's
+// latitude, a bit south and above the feature, looking back across the gorge at
+// it. yLook comes from the static elevation since heightAt isn't ready at module
+// load. Returns { cam, look } to spread into a landmark.
+const FT_TO_M = 0.3048;
+function gorgeView(x, z, elevFt) {
+  const yLook = elevFt * FT_TO_M;
+  return { cam: [riverX(z), yLook + 220, z + 750], look: [x, yLook, z] };
+}
+
 // ---- Height field (DEM bilinear sample) ------------------------------------
 
 // Bilinear lookup into the loaded DEM. World (x, z) -> fractional pixel
@@ -207,29 +218,25 @@ export const LANDMARKS = [
     name: "Hawksbill",
     elevFt: 4009,
     label: [SPOT.hawksbill.x, 1330, SPOT.hawksbill.z],
-    cam: [SPOT.hawksbill.x - 2300, 1390, SPOT.hawksbill.z + 900],
-    look: [SPOT.hawksbill.x, 1200, SPOT.hawksbill.z],
+    ...gorgeView(SPOT.hawksbill.x, SPOT.hawksbill.z, 4009),
   },
   {
     name: "Table Rock",
     elevFt: 3909,
     label: [SPOT.tableRock.x, 1300, SPOT.tableRock.z],
-    cam: [SPOT.tableRock.x - 2400, 1370, SPOT.tableRock.z + 950],
-    look: [SPOT.tableRock.x, 1170, SPOT.tableRock.z],
+    ...gorgeView(SPOT.tableRock.x, SPOT.tableRock.z, 3909),
   },
   {
     name: "Wiseman's View",
     elevFt: 3400,
     label: [SPOT.wisemans.x, 1240, SPOT.wisemans.z],
-    cam: [SPOT.wisemans.x - 60, 1185, SPOT.wisemans.z],
-    look: [riverX(-250), 470, -250],
+    ...gorgeView(SPOT.wisemans.x, SPOT.wisemans.z, 3400),
   },
   {
     name: "Shortoff Mountain",
     elevFt: 2883,
     label: [SPOT.shortoff.x, 1060, SPOT.shortoff.z],
-    cam: [SPOT.shortoff.x - 1700, 1080, SPOT.shortoff.z - 900],
-    look: [SPOT.shortoff.x, 940, SPOT.shortoff.z],
+    ...gorgeView(SPOT.shortoff.x, SPOT.shortoff.z, 2883),
   },
   {
     name: "Lake James",
