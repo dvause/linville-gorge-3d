@@ -5,6 +5,7 @@ import { buildWater } from './water.js';
 import { buildForest } from './vegetation.js';
 import { buildLandmarks } from './landmarks.js';
 import { buildControls } from './controls.js';
+import { buildTouchControls } from './touch.js';
 import { LANDMARKS, START_VIEW, loadHeightmap } from './geo.js';
 
 const app = document.getElementById('app');
@@ -24,8 +25,9 @@ camera.position.set(...START_VIEW.cam);
 buildSky(scene);
 const water = buildWater(scene);
 const landmarks = buildLandmarks(scene);
-const { update: updateControls, flyTo, controls } = buildControls(camera, renderer.domElement);
+const { update: updateControls, flyTo, controls, virtual } = buildControls(camera, renderer.domElement);
 controls.target.set(...START_VIEW.look);
+buildTouchControls(virtual);
 
 // ---- landmark buttons -------------------------------------------------------
 
@@ -114,7 +116,7 @@ renderer.setAnimationLoop(() => {
   }
 });
 
-window.__lg = { camera, controls, flyTo }; // console/debug hook
+window.__lg = { camera, controls, flyTo, virtual }; // console/debug hook
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;

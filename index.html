@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Linville Gorge — 3D</title>
   <style>
     html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1020; }
@@ -50,6 +50,47 @@
       padding: 4px 10px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
     }
     #places button:hover { background: rgba(60, 100, 150, 0.5); border-color: rgba(255,255,255,0.3); }
+
+    /* ---- touch controls: hidden until a coarse pointer (phone/tablet) ---- */
+    .touch-only { display: none; }
+
+    #joystick {
+      left: calc(env(safe-area-inset-left, 0px) + 24px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
+      width: 116px; height: 116px; border-radius: 50%; z-index: 12;
+      align-items: center; justify-content: center; touch-action: none;
+      background: rgba(10, 18, 32, 0.4); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    #joyknob {
+      width: 52px; height: 52px; border-radius: 50%; pointer-events: none;
+      background: rgba(158, 203, 239, 0.55); border: 1px solid rgba(255, 255, 255, 0.45);
+      transition: transform 0.09s ease-out;
+    }
+    #vbtns {
+      right: calc(env(safe-area-inset-right, 0px) + 24px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
+      flex-direction: column; gap: 14px; z-index: 12;
+    }
+    #vbtns button {
+      width: 58px; height: 58px; border-radius: 50%; touch-action: none;
+      font-size: 22px; color: #dceaf6; display: flex; align-items: center; justify-content: center;
+      background: rgba(10, 18, 32, 0.5); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    #vbtns button:active { background: rgba(60, 100, 150, 0.6); }
+
+    @media (pointer: coarse) {
+      .touch-only { display: flex; }
+      #help { display: none; }
+      /* move the landmark list out of the thumb zones, into a scrollable strip */
+      #places {
+        top: calc(env(safe-area-inset-top, 0px) + 52px); bottom: auto;
+        right: calc(env(safe-area-inset-right, 0px) + 8px);
+        max-height: 52vh; overflow-y: auto; padding-left: 6px;
+      }
+      #places button { padding: 6px 12px; font-size: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -69,6 +110,11 @@
   </div>
   <div class="hud" id="fps"></div>
   <div class="hud" id="places"></div>
+  <div class="hud touch-only" id="joystick"><div id="joyknob"></div></div>
+  <div class="hud touch-only" id="vbtns">
+    <button id="btn-up" aria-label="fly up">▲</button>
+    <button id="btn-down" aria-label="fly down">▼</button>
+  </div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

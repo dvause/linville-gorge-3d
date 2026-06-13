@@ -22,6 +22,10 @@ export function buildControls(camera, dom) {
   window.addEventListener('keyup', (e) => keys.delete(e.code));
   window.addEventListener('blur', () => keys.clear());
 
+  // Analog input from the on-screen touch controls (touch.js). Each axis is
+  // -1..1 and is summed with the keyboard before movement is applied.
+  const virtual = { forward: 0, strafe: 0, vertical: 0 };
+
   const fwd = new THREE.Vector3();
   const right = new THREE.Vector3();
   const move = new THREE.Vector3();
@@ -41,9 +45,13 @@ export function buildControls(camera, dom) {
   }
 
   function update(dt) {
-    // keyboard interrupts a tween
-    const flying = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyQ', 'KeyE'].some((k) => keys.has(k));
-    if (flying) tween = null;
+    // combine keyboard (on/off) with the analog touch axes, clamped to -1..1
+    const k = (a, b) => (keys.has(a) ? 1 : 0) - (keys.has(b) ? 1 : 0);
+    const forward = THREE.MathUtils.clamp(k('KeyW', 'KeyS') + virtual.forward, -1, 1);
+    const strafe = THREE.MathUtils.clamp(k('KeyD', 'KeyA') + virtual.strafe, -1, 1);
+    const vertical = THREE.MathUtils.clamp(k('KeyE', 'KeyQ') + virtual.vertical, -1, 1);
+    const flying = forward !== 0 || strafe !== 0 || vertical !== 0;
+    if (flying) tween = null; // any movement input interrupts a tween
 
     if (tween) {
       tween.t += dt;
@@ -60,23 +68,22 @@ export function buildControls(camera, dom) {
       right.crossVectors(fwd, UP);
 
       move.set(0, 0, 0);
-      if (keys.has('KeyW')) move.add(fwd);
-      if (keys.has('KeyS')) move.sub(fwd);
-      if (keys.has('KeyD')) move.add(right);
-      if (keys.has('KeyA')) move.sub(right);
-      if (keys.has('KeyE')) move.y += 1;
-      if (keys.has('KeyQ')) move.y -= 1;
+      move.addScaledVector(fwd, forward);
+      move.addScaledVector(right, strafe);
+      // cap horizontal magnitude at 1 so diagonals (and W+D) aren't faster,
+      // while still allowing analog deflection below full speed
+      const hLen = Math.hypot(move.x, move.z);
+      if (hLen > 1) { move.x /= hLen; move.z /= hLen; }
+      move.y = vertical;
 
-      if (move.lengthSq() > 0) {
-        // speed scales with altitude above terrain so low flight is gentle
-        const ground = heightAt(camera.position.x, camera.position.z);
-        const alt = Math.max(camera.position.y - ground, 5);
-        const speed = THREE.MathUtils.clamp(alt * 1.6, 60, 1900) *
-          (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 3 : 1);
-        move.normalize().multiplyScalar(speed * dt);
-        camera.position.add(move);
-        controls.target.add(move);
-      }
+      // speed scales with altitude above terrain so low flight is gentle
+      const ground = heightAt(camera.position.x, camera.position.z);
+      const alt = Math.max(camera.position.y - ground, 5);
+      const speed = THREE.MathUtils.clamp(alt * 1.6, 60, 1900) *
+        (keys.has('ShiftLeft') || keys.has('ShiftRight') ? 3 : 1);
+      move.multiplyScalar(speed * dt);
+      camera.position.add(move);
+      controls.target.add(move);
     }
 
     // keep the camera out of the dirt
@@ -86,5 +93,5 @@ export function buildControls(camera, dom) {
     controls.update();
   }
 
-  return { controls, update, flyTo };
+  return { controls, update, flyTo, virtual };
 }
