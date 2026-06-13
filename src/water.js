@@ -106,7 +106,10 @@ function buildRiverGeometry() {
   for (let i = 0; i < n; i++) {
     const z = pts[i];
     const cx = riverX(z);
-    const y = riverElev(z) - 0.8;
+    // sit just above the thalweg so the ribbon clears the bare-earth bed
+    // (the DEM has no carved channel below the water surface) instead of being
+    // occluded by it
+    const y = riverElev(z) + 2.0;
     const hw = riverWidth(z) * 1.25;
     vdist += Math.abs(z - prevZ);
     prevZ = z;
