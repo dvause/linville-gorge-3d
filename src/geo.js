@@ -162,6 +162,8 @@ const SPOT = {
   shortoff: peak(35.8330, -81.8989),
   // Wiseman's View is a west-rim overlook (not a summit); real coordinates.
   wisemans: peak(35.9037382, -81.9053873),
+  // Gingercake Mountain: the gorge's high point (~4144 ft), at the north rim.
+  gingercake: peak(35.9387386, -81.8903877),
 };
 
 // Consistent fly-to framing for rim landmarks: hover over the gorge centerline
@@ -214,6 +216,12 @@ export const LANDMARKS = [
     // elevated, downstream and east, looking down at the cascade on the slope
     cam: [riverX(-9485) + 480, riverElev(-9485) + 340, -9040],
     look: [riverX(-9485), riverElev(-9485), -9490],
+  },
+  {
+    name: "Gingercake Mountain",
+    elevFt: 4144,
+    label: [SPOT.gingercake.x, 1400, SPOT.gingercake.z],
+    ...gorgeView(SPOT.gingercake.x, SPOT.gingercake.z, 4144),
   },
   {
     name: "Hawksbill",

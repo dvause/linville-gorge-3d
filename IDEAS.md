@@ -1,6 +1,0 @@
-- Add major trails: Table Rock Trail, Shortoff Mountain Trail, Hawksbill Trail, Wiseman's View, The Chimneys, Mountain to Sea Trail, Rock Jock Trail, Babel Tower Trail.
-- Add Old NC 105 on the western side, Table Rock Road on the eastern side
-- Add Gingercake Mountain as the northern most feature
-- Figther jet flying through gorge intermittently or as an easter egg
-- Data and site attibutions
-- Built with Claude Fable and Opus
