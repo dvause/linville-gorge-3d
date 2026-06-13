@@ -145,16 +145,20 @@ export function lakeMask(x, z) {
 
 // ---- Rim & peaks ----------------------------------------------------------
 
-// Summits ride the rim crest, so their x is an offset from the river
-// centerline at their latitude (the rim follows the meanders).
-const RIM = 1400; // lateral distance river -> rim shoulder
+// Summit positions from real-world coordinates, projected to the world grid
+// with the same transform as the DEM, so each label sits on the true peak.
+const GEO_BOUNDS = { W: -81.97526993629236, E: -81.83054770249237, S: 35.757311916094906, N: 35.971293414694905 };
+const lonToX = (lon) => WORLD.minX + ((lon - GEO_BOUNDS.W) / (GEO_BOUNDS.E - GEO_BOUNDS.W)) * (WORLD.maxX - WORLD.minX);
+const latToZ = (lat) => WORLD.minZ + ((GEO_BOUNDS.N - lat) / (GEO_BOUNDS.N - GEO_BOUNDS.S)) * (WORLD.maxZ - WORLD.minZ);
+const peak = (lat, lon) => ({ x: lonToX(lon), z: latToZ(lat) });
 
 const SPOT = {
-  hawksbill: { z: -2600, x: riverX(-2600) + RIM + 50 },
-  tableRock: { z: 300, x: riverX(300) + RIM + 80 },
-  shortoff: { z: 4400, x: riverX(4400) + RIM - 50 },
-  wisemans: { z: -700, x: riverX(-700) - RIM + 120 },
-  crag: { z: -1300, x: riverX(-1300) + RIM },
+  // Hawksbill's published lat/long projects ~0.8 km off our DEM's high point,
+  // so anchor it to the actual summit pixel the terrain renders.
+  hawksbill: { x: 1791, z: -2967 },
+  tableRock: peak(35.8860, -81.8845),
+  shortoff: peak(35.8330, -81.8989),
+  wisemans: peak(35.9067, -81.9164),
 };
 
 // ---- Height field (DEM bilinear sample) ------------------------------------
