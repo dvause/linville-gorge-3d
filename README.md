@@ -12,8 +12,8 @@ government forced Anthropic to take it offline. It has since continued in Opus
 The renderer works on both desktop (mouse + keyboard) and mobile (joystick +
 buttons).
 
-An evolving project: major trails (Old 105 on the west rim, Table Rock Road on
-the east) will frame the gorge; more landmarks and easter eggs are planned.
+It's an evolving project. I want to add the gorge's major trails, Old 105 on the west rim 
+and Table Rock Rd to the east, additional landmarks, and maybe an easter egg or two.
 
 ## Run it
 
