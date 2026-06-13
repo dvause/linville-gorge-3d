@@ -80,6 +80,16 @@
     }
     #vbtns button:active { background: rgba(60, 100, 150, 0.6); }
 
+    #touchhint {
+      left: 50%; transform: translateX(-50%);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 172px);
+      font-size: 11px; color: #cfe3f5; opacity: 0.85; white-space: nowrap;
+      background: rgba(10, 18, 32, 0.5); backdrop-filter: blur(6px);
+      padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none; z-index: 11;
+    }
+    #touchhint b { color: #9ecbef; font-weight: 600; }
+
     @media (pointer: coarse) {
       .touch-only { display: flex; }
       #help { display: none; }
@@ -115,6 +125,7 @@
     <button id="btn-up" aria-label="fly up">▲</button>
     <button id="btn-down" aria-label="fly down">▼</button>
   </div>
+  <div class="hud touch-only" id="touchhint"><b>Drag</b> to look around &nbsp;·&nbsp; <b>joystick</b> to fly</div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
