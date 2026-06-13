@@ -55,7 +55,7 @@
     .touch-only { display: none; }
 
     #joystick {
-      left: calc(env(safe-area-inset-left, 0px) + 24px);
+      left: 50%; transform: translateX(-50%);
       bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
       width: 116px; height: 116px; border-radius: 50%; z-index: 12;
       align-items: center; justify-content: center; touch-action: none;
@@ -93,6 +93,8 @@
     @media (pointer: coarse) {
       .touch-only { display: flex; }
       #help { display: none; }
+      /* keep the hint as normal inline flow (not flex) so its spaces survive */
+      #touchhint { display: inline-block; }
       /* move the landmark list out of the thumb zones, into a scrollable strip */
       #places {
         top: calc(env(safe-area-inset-top, 0px) + 52px); bottom: auto;
