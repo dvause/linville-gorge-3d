@@ -243,7 +243,9 @@ export const LANDMARKS = [
     name: "Lake James",
     elevFt: 1200,
     label: [2870, 480, 8412],
-    cam: [2300, 1020, 5900], look: [2870, 368, 8412],
+    // up north and west, looking SE down the river channel as it leaves the
+    // gorge and opens into the lake
+    cam: [-1900, 1550, 3400], look: [900, 430, 8600],
   },
 ];
 
