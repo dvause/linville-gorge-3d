@@ -153,10 +153,12 @@ const latToZ = (lat) => WORLD.minZ + ((GEO_BOUNDS.N - lat) / (GEO_BOUNDS.N - GEO
 const peak = (lat, lon) => ({ x: lonToX(lon), z: latToZ(lat) });
 
 const SPOT = {
-  // Hawksbill's published lat/long projects ~0.8 km off our DEM's high point,
-  // so anchor it to the actual summit pixel the terrain renders.
-  hawksbill: { x: 1791, z: -2967 },
-  tableRock: peak(35.8860, -81.8845),
+  // Hawksbill and Table Rock: published coordinates don't line up with our DEM
+  // (and earlier put both on the same dome), so anchor each to its actual DEM
+  // summit pixel — Hawksbill is the northern peak (~4007 ft), Table Rock the
+  // distinctive dome ~2.5 km to its south (~3928 ft).
+  hawksbill: { x: 1510, z: -5440 },
+  tableRock: { x: 1810, z: -2980 },
   shortoff: peak(35.8330, -81.8989),
   wisemans: peak(35.9067, -81.9164),
 };
