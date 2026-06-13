@@ -4,6 +4,7 @@
 
 import * as THREE from 'three';
 import { riverX, riverElev, riverWidth, WORLD } from './geo.js';
+import { LAKE } from './hydro.js';
 
 const waterNoise = /* glsl */ `
   float whash(vec2 p) {
@@ -94,9 +95,9 @@ function makeWaterMaterial(opts) {
 
 function buildRiverGeometry() {
   const pts = [];
-  for (let z = -7900; z <= 5750; ) {
+  for (let z = -11900; z <= 5750; ) {
     pts.push(z);
-    z += (z > -7280 && z < -7140) ? 4 : 30; // fine sampling over the falls
+    z += (z > -9620 && z < -9390) ? 4 : 30; // fine sampling over the falls
   }
   const n = pts.length;
   const pos = new Float32Array(n * 2 * 3);
@@ -144,6 +145,40 @@ function makeMistTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+// Lake James surface, triangulated from the real NHD polygon (hydro.js LAKE)
+// laid flat at lake level. UVs are normalized over the ring's bounding box so
+// the water shader's ripple scale is independent of the polygon's world size.
+function buildLakeGeometry() {
+  const ring = LAKE[0];
+  let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
+  for (const [x, z] of ring) {
+    if (x < minX) minX = x; if (x > maxX) maxX = x;
+    if (z < minZ) minZ = z; if (z > maxZ) maxZ = z;
+  }
+  const spanX = maxX - minX, spanZ = maxZ - minZ;
+
+  const contour = ring.map(([x, z]) => new THREE.Vector2(x, z));
+  const tris = THREE.ShapeUtils.triangulateShape(contour, []);
+
+  const pos = new Float32Array(ring.length * 3);
+  const uv = new Float32Array(ring.length * 2);
+  for (let i = 0; i < ring.length; i++) {
+    const [x, z] = ring[i];
+    pos[i * 3] = x; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = z;
+    uv[i * 2] = (x - minX) / spanX; uv[i * 2 + 1] = (z - minZ) / spanZ;
+  }
+  const idx = [];
+  for (const t of tris) idx.push(t[0], t[1], t[2]);
+
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  g.userData.noiseScale = [spanX / 80, spanZ / 80]; // ~1 ripple per 80 m
+  return g;
+}
+
 export function buildWater(scene) {
   const updaters = [];
 
@@ -158,16 +193,16 @@ export function buildWater(scene) {
   scene.add(river);
   updaters.push((t) => (river.material.uniforms.time.value = t));
 
-  // --- Lake James ---
+  // --- Lake James (real NHD polygon) ---
+  const lakeGeo = buildLakeGeometry();
   const lake = new THREE.Mesh(
-    new THREE.PlaneGeometry(4700, 2900),
+    lakeGeo,
     makeWaterMaterial({
       deep: 0x1f4a5e, shallow: 0x36708a, flow: [0.015, 0.02],
-      noiseScale: [60, 36], foam: 0.0, alpha: 0.94,
+      noiseScale: lakeGeo.userData.noiseScale, foam: 0.0, alpha: 0.94,
     })
   );
-  lake.rotation.x = -Math.PI / 2;
-  lake.position.set(600, WORLD.lakeLevel, 6900);
+  lake.position.y = WORLD.lakeLevel; // geometry is flat in xz at y=0
   scene.add(lake);
   updaters.push((t) => (lake.material.uniforms.time.value = t));
 
@@ -177,8 +212,11 @@ export function buildWater(scene) {
     noiseScale: [7, 4], foam: 0.65, alpha: 0.9,
   });
 
-  function addFall(zTop, zBot, yTop, yBot, widen) {
+  // The drop sits on the real thalweg: y is sampled from riverElev so the sheet
+  // always meets the river surface instead of floating at a fixed height.
+  function addFall(zTop, zBot, widen) {
     const cxT = riverX(zTop), cxB = riverX(zBot);
+    const yTop = riverElev(zTop), yBot = riverElev(zBot);
     const hwT = riverWidth(zTop) * 0.95, hwB = riverWidth(zBot) * (0.95 + widen);
     const g = new THREE.BufferGeometry();
     const pos = new Float32Array([
@@ -194,8 +232,11 @@ export function buildWater(scene) {
     return m;
   }
 
-  addFall(-7246, -7216, 975.5, 965.5, 0.0); // upper cascade (sloped)
-  addFall(-7186, -7162, 966.5, 926.5, 0.3); // main plunge
+  // real Linville Falls is the steep thalweg reach near z=-9500 (lat ~35.951).
+  // The river flows north (-z, upstream/high) to south (+z, downstream/low), so
+  // zTop is the more-negative, higher end; widen at the downstream plunge base.
+  addFall(-9560, -9480, 0.0); // upper cascade
+  addFall(-9480, -9410, 0.3); // main plunge into the pool
   updaters.push((t) => (fallsMat.uniforms.time.value = t));
 
   // --- Mist at the plunge pool ---
@@ -203,7 +244,7 @@ export function buildWater(scene) {
   const mistGeo = new THREE.BufferGeometry();
   const mp = new Float32Array(MIST * 3);
   const seeds = new Float32Array(MIST);
-  const baseX = riverX(-7160), baseY = 929, baseZ = -7158;
+  const baseX = riverX(-9410), baseY = riverElev(-9410) + 2, baseZ = -9410;
   for (let i = 0; i < MIST; i++) seeds[i] = Math.random();
   mistGeo.setAttribute('position', new THREE.BufferAttribute(mp, 3));
   const mist = new THREE.Points(

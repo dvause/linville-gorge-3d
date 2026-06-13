@@ -192,8 +192,9 @@ export const LANDMARKS = [
   {
     name: "Linville Falls",
     elevFt: 3250,
-    label: [riverX(-7185), 985, -7185],
-    cam: [riverX(-7185) - 200, 990, -6890], look: [riverX(-7185), 948, -7175],
+    label: [riverX(-9530), riverElev(-9530) + 55, -9530],
+    cam: [riverX(-9530) - 230, riverElev(-9450) + 80, -9300],
+    look: [riverX(-9530), riverElev(-9560), -9560],
   },
   {
     name: "Hawksbill",
