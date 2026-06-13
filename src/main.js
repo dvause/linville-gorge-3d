@@ -24,7 +24,7 @@ camera.position.set(...START_VIEW.cam);
 
 buildSky(scene);
 const water = buildWater(scene);
-const landmarks = buildLandmarks(scene);
+let landmarks = null; // built after the DEM loads (labels sample heightAt)
 const { update: updateControls, flyTo, controls, virtual } = buildControls(camera, renderer.domElement);
 controls.target.set(...START_VIEW.look);
 buildTouchControls(virtual);
@@ -58,6 +58,7 @@ let building = false;
 (async () => {
   loadmsg.textContent = 'reading elevation data…';
   await loadHeightmap();
+  landmarks = buildLandmarks(scene); // elevations come from the loaded DEM
 
   const terrain = buildTerrain();
   for (const j of terrain.jobs) jobs.push({ run: j, weight: 1, msg: 'carving the gorge…' });
@@ -103,7 +104,7 @@ renderer.setAnimationLoop(() => {
 
   updateControls(dt);
   water.update(t);
-  landmarks.update(camera);
+  if (landmarks) landmarks.update(camera);
 
   renderer.render(scene, camera);
 

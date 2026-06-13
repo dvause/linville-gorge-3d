@@ -191,35 +191,41 @@ export function heightAt(x, z) {
 export const LANDMARKS = [
   {
     name: "Linville Falls",
+    elevFt: 3250,
     label: [riverX(-7185), 985, -7185],
     cam: [riverX(-7185) - 200, 990, -6890], look: [riverX(-7185), 948, -7175],
   },
   {
     name: "Hawksbill",
+    elevFt: 4009,
     label: [SPOT.hawksbill.x, 1330, SPOT.hawksbill.z],
     cam: [SPOT.hawksbill.x - 2300, 1390, SPOT.hawksbill.z + 900],
     look: [SPOT.hawksbill.x, 1200, SPOT.hawksbill.z],
   },
   {
     name: "Table Rock",
+    elevFt: 3909,
     label: [SPOT.tableRock.x, 1300, SPOT.tableRock.z],
     cam: [SPOT.tableRock.x - 2400, 1370, SPOT.tableRock.z + 950],
     look: [SPOT.tableRock.x, 1170, SPOT.tableRock.z],
   },
   {
     name: "Wiseman's View",
+    elevFt: 3400,
     label: [SPOT.wisemans.x, 1240, SPOT.wisemans.z],
     cam: [SPOT.wisemans.x - 60, 1185, SPOT.wisemans.z],
     look: [riverX(-250), 470, -250],
   },
   {
     name: "Shortoff Mountain",
+    elevFt: 2883,
     label: [SPOT.shortoff.x, 1060, SPOT.shortoff.z],
     cam: [SPOT.shortoff.x - 1700, 1080, SPOT.shortoff.z - 900],
     look: [SPOT.shortoff.x, 940, SPOT.shortoff.z],
   },
   {
     name: "Lake James",
+    elevFt: 1200,
     label: [2870, 480, 8412],
     cam: [2300, 1020, 5900], look: [2870, 368, 8412],
   },
