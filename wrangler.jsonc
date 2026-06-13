@@ -1,0 +1,9 @@
+{
+  // Static-assets Worker: no server code, just serves the Vite build output.
+  // Build with `npm run build` (produces ./dist), then `wrangler deploy`.
+  "name": "linville-gorge-3d",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
