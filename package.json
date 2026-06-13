@@ -1,0 +1,20 @@
+{
+  "name": "linville-gorge-3d",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "hydro:fetch": "node scripts/fetch_hydro.mjs",
+    "hydro:build": "node scripts/process_hydro.mjs"
+  },
+  "dependencies": {
+    "fast-png": "^8.0.0",
+    "three": "^0.165.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

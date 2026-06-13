@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linville Gorge — 3D</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1020; }
+    #app { position: fixed; inset: 0; }
+    canvas { display: block; }
+
+    #loading {
+      position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+      background: linear-gradient(180deg, #16243a 0%, #0b1020 100%);
+      color: #cfe3f5; font-family: Georgia, 'Times New Roman', serif;
+      z-index: 20; transition: opacity 0.8s ease; pointer-events: none;
+    }
+    #loading h1 { font-size: 28px; font-weight: normal; letter-spacing: 3px; margin: 0; }
+    #loading .sub { font-size: 13px; opacity: 0.7; font-style: italic; }
+    #loading .bar { width: 220px; height: 3px; background: #2a3b55; border-radius: 2px; overflow: hidden; }
+    #loading .bar > div { height: 100%; width: 0%; background: #8fc1e8; transition: width 0.2s; }
+
+    .hud {
+      position: fixed; font-family: -apple-system, 'Segoe UI', sans-serif;
+      color: #e8f1f8; z-index: 10; user-select: none;
+    }
+    #title { top: 16px; left: 18px; pointer-events: none; }
+    #title .name { font-family: Georgia, serif; font-size: 20px; letter-spacing: 2px; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
+    #title .tag { font-size: 11px; opacity: 0.75; font-style: italic; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+
+    #help {
+      bottom: 14px; left: 18px; font-size: 11px; line-height: 1.7;
+      background: rgba(10, 18, 32, 0.55); backdrop-filter: blur(6px);
+      padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+    #help b { color: #9ecbef; font-weight: 600; }
+
+    #fps { top: 16px; right: 18px; font-size: 11px; opacity: 0.8; font-variant-numeric: tabular-nums; pointer-events: none; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+
+    #places {
+      bottom: 14px; right: 18px; display: flex; flex-direction: column; gap: 4px;
+      align-items: flex-end;
+    }
+    #places button {
+      font: 11px -apple-system, 'Segoe UI', sans-serif; color: #dceaf6;
+      background: rgba(10, 18, 32, 0.55); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+      padding: 4px 10px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+    }
+    #places button:hover { background: rgba(60, 100, 150, 0.5); border-color: rgba(255,255,255,0.3); }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="loading">
+    <h1>LINVILLE GORGE</h1>
+    <div class="sub">the Grand Canyon of the East</div>
+    <div class="bar"><div id="loadbar"></div></div>
+    <div class="sub" id="loadmsg">carving the gorge…</div>
+  </div>
+  <div class="hud" id="title">
+    <div class="name">LINVILLE GORGE</div>
+    <div class="tag">Pisgah National Forest, North Carolina</div>
+  </div>
+  <div class="hud" id="help">
+    <b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>W A S D</b> fly &nbsp; <b>Q / E</b> down / up &nbsp; <b>shift</b> faster
+  </div>
+  <div class="hud" id="fps"></div>
+  <div class="hud" id="places"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "size_px": 1024,
+  "elev_min_m": 339.386,
+  "elev_max_m": 1305.536,
+  "pixel_size_m": {
+    "x": 0.0001,
+    "y": 0.0002
+  },
+  "world_extent_m": {
+    "width": 0.14,
+    "height": 0.21
+  },
+  "bounds_native": {
+    "west": -81.97526993629236,
+    "south": 35.757311916094906,
+    "east": -81.83054770249237,
+    "north": 35.971293414694905
+  },
+  "row0_is": "north",
+  "reconstruct": "elev_m = elev_min_m + (pixel/65535)*(elev_max_m-elev_min_m)"
+}
