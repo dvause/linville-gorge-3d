@@ -212,31 +212,45 @@ export function buildWater(scene) {
     noiseScale: [7, 4], foam: 0.65, alpha: 0.9,
   });
 
-  // The drop sits on the real thalweg: y is sampled from riverElev so the sheet
-  // always meets the river surface instead of floating at a fixed height.
-  function addFall(zTop, zBot, widen) {
-    const cxT = riverX(zTop), cxB = riverX(zBot);
-    const yTop = riverElev(zTop), yBot = riverElev(zBot);
-    const hwT = riverWidth(zTop) * 0.95, hwB = riverWidth(zBot) * (0.95 + widen);
+  // Whitewater cascade over the steep thalweg reach at the real Linville Falls
+  // (z=-9560..-9410, lat ~35.951). Tessellated finely so it hugs the channel
+  // (riverElev/riverX) down the slope instead of bridging the dip as one flat
+  // quad. Sits just above the river ribbon so the foam reads as rapids.
+  function buildFalls(zUp, zDown, step = 4) {
+    const zs = [];
+    for (let z = zUp; z < zDown; z += step) zs.push(z);
+    zs.push(zDown);
+    const n = zs.length;
+    const pos = new Float32Array(n * 2 * 3);
+    const uv = new Float32Array(n * 2 * 2);
+    let vdist = 0;
+    for (let i = 0; i < n; i++) {
+      const z = zs[i];
+      const cx = riverX(z), y = riverElev(z) + 0.3, hw = riverWidth(z) * 1.15;
+      if (i > 0) vdist += Math.abs(z - zs[i - 1]);
+      const k = i * 6;
+      pos[k] = cx - hw; pos[k + 1] = y; pos[k + 2] = z;
+      pos[k + 3] = cx + hw; pos[k + 4] = y; pos[k + 5] = z;
+      const ku = i * 4;
+      uv[ku] = 0; uv[ku + 1] = vdist / 18; uv[ku + 2] = 1; uv[ku + 3] = vdist / 18;
+    }
+    const idx = new Uint32Array((n - 1) * 6);
+    let p = 0;
+    for (let i = 0; i < n - 1; i++) {
+      const a = i * 2;
+      idx[p++] = a; idx[p++] = a + 1; idx[p++] = a + 2;
+      idx[p++] = a + 1; idx[p++] = a + 3; idx[p++] = a + 2;
+    }
     const g = new THREE.BufferGeometry();
-    const pos = new Float32Array([
-      cxT - hwT, yTop, zTop, cxT + hwT, yTop, zTop,
-      cxB - hwB, yBot, zBot, cxB + hwB, yBot, zBot,
-    ]);
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array([0, 0, 1, 0, 0, 1, 1, 1]), 2));
-    g.setIndex([0, 1, 2, 1, 3, 2]);
+    g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    g.setIndex(new THREE.BufferAttribute(idx, 1));
     g.computeVertexNormals();
-    const m = new THREE.Mesh(g, fallsMat);
-    scene.add(m);
-    return m;
+    return g;
   }
 
-  // real Linville Falls is the steep thalweg reach near z=-9500 (lat ~35.951).
-  // The river flows north (-z, upstream/high) to south (+z, downstream/low), so
-  // zTop is the more-negative, higher end; widen at the downstream plunge base.
-  addFall(-9560, -9480, 0.0); // upper cascade
-  addFall(-9480, -9410, 0.3); // main plunge into the pool
+  const falls = new THREE.Mesh(buildFalls(-9560, -9410), fallsMat);
+  scene.add(falls);
   updaters.push((t) => (fallsMat.uniforms.time.value = t));
 
   // --- Mist at the plunge pool ---
