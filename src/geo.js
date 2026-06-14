@@ -240,6 +240,7 @@ export const LANDMARKS = [
     elevFt: 3400,
     label: [SPOT.wisemans.x, 1240, SPOT.wisemans.z],
     ...gorgeView(SPOT.wisemans.x, SPOT.wisemans.z, 3400),
+    jetFlyby: true, // chance of a fighter jet screaming up the gorge on arrival
   },
   {
     name: "Shortoff Mountain",

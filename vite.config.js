@@ -8,5 +8,8 @@ export default defineConfig({
   plugins: [],
   server: {
     port: process.env.PORT ? Number(process.env.PORT) : 5173,
+    // Reachable over Tailscale: allow MagicDNS hostnames (Vite blocks unknown
+    // Host headers by default, so the raw IP works but `eddie`/`*.ts.net` 404).
+    allowedHosts: ['.ts.net', 'eddie'],
   },
 });
