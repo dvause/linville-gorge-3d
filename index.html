@@ -23,7 +23,9 @@
 
     .hud {
       position: fixed; font-family: -apple-system, 'Segoe UI', sans-serif;
-      color: #e8f1f8; z-index: 10; user-select: none;
+      color: #e8f1f8; z-index: 10;
+      -webkit-user-select: none; user-select: none;
+      -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
     }
     #title { top: 16px; left: 18px; pointer-events: none; }
     #title .name { font-family: Georgia, serif; font-size: 20px; letter-spacing: 2px; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
