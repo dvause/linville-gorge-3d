@@ -29,6 +29,18 @@ function makeCallout(name, elevText) {
 
   c.width = W; c.height = H;
   ctx = c.getContext('2d');
+
+  // dark pill behind the text block for legibility against bright sky
+  const BG_PAD = 10;
+  ctx.fillStyle = 'rgba(0, 5, 15, 0.52)';
+  ctx.beginPath();
+  ctx.roundRect(
+    textLeft - BG_PAD, PAD - BG_PAD,
+    textW + RIGHT_PAD + BG_PAD, (ruleY - PAD) + BG_PAD * 2,
+    8
+  );
+  ctx.fill();
+
   ctx.shadowColor = 'rgba(0, 10, 25, 0.85)';
   ctx.shadowBlur = 8;
   ctx.shadowOffsetY = 2;
