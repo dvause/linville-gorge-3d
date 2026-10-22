@@ -1,5 +1,5 @@
 # Dependabot: weekly grouped version updates + grouped security updates.
-# Majors arrive as separate PRs. Docs: https://docs.github.com/code-security/dependabot
+# Majors arrive as separate PRs. 7-day cooldown on version updates (security updates are not delayed). Docs: https://docs.github.com/code-security/dependabot
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -9,6 +9,8 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/New_York"
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     groups:
       npm-security:
